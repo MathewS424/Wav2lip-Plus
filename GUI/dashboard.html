@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Wav2Lip Dashboard - Dark Mode</title>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/7.7.3/wavesurfer.min.js"></script>
+    <script src="js/dashboard.js" defer></script>
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <div class="max-w-7xl mx-auto p-4">
+        <!-- Compact Header with Server Config -->
+        <div class="flex items-center justify-between mb-4 bg-gray-800 rounded-lg shadow-sm p-3">
+            <h1 class="text-xl font-bold text-gray-200">Wav2Lip Dashboard</h1>
+            <div class="flex gap-2">
+                <input type="text" id="serverUrl" 
+                    class="w-96 rounded-md border border-gray-600 bg-gray-700 text-gray-200 px-3 py-1 text-sm"
+                    placeholder="Enter ngrok URL (e.g., https://xxxx-xx-xx-xxx-xxx.ngrok-free.app)">
+                <button onclick="testConnection()" 
+                    class="px-4 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700">
+                    Test Connection
+                </button>
+                <button onclick="saveServerUrl()">Save</button>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-2 gap-4">
+            <!-- Left Column: Input Files -->
+            <div class="space-y-4">
+                <!-- Video Input Card -->
+                <div class="bg-gray-800 rounded-lg shadow-sm p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-sm font-medium text-gray-300">Source Video</label>
+                        <span id="videoInfo" class="text-xs text-gray-400"></span>
+                    </div>
+                    <div class="border-2 border-dashed border-gray-600 rounded-lg p-4 text-center hover:border-blue-400 transition-colors">
+                        <input type="file" id="video" accept="video/*" class="hidden">
+                        <label for="video" class="cursor-pointer">
+                            <svg class="mx-auto h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h18M3 16h18"/>
+                            </svg>
+                            <span class="mt-2 block text-sm text-blue-400">Upload Video</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Video Preview -->
+                    <div id="videoPreview" class="hidden mt-4">
+                        <video id="previewVideo" class="w-full rounded-lg" controls></video>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-400 mb-2">Frame Preview:</p>
+                            <div id="framePreview" class="grid grid-cols-5 gap-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Audio Input Card -->
+                <div class="bg-gray-800 rounded-lg shadow-sm p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-sm font-medium text-gray-300">Audio Source</label>
+                        <span id="audioInfo" class="text-xs text-gray-400"></span>
+                    </div>
+                    <div class="border-2 border-dashed border-gray-600 rounded-lg p-4 text-center hover:border-blue-400 transition-colors">
+                        <input type="file" id="audio" accept="audio/*" class="hidden">
+                        <label for="audio" class="cursor-pointer">
+                            <svg class="mx-auto h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+                            </svg>
+                            <span class="mt-2 block text-sm text-blue-400">Upload Audio</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Audio Waveform -->
+                    <div id="waveform" class="mt-4 h-24"></div>
+                </div>
+            </div>
+
+            <!-- Right Column: Output and Processing -->
+            <div class="space-y-4">
+                <!-- Process Button and Status -->
+                <div class="bg-gray-800 rounded-lg shadow-sm p-4">
+                    <button id="submitBtn" class="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                        Process Files
+                    </button>
+                    <div id="status" class="hidden mt-4 p-3 rounded-md"></div>
+                    <div id="progressContainer" class="hidden mt-4">
+                        <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+                            <div id="progressBar" class="h-full bg-blue-500 transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                        <p id="progressText" class="text-sm text-gray-400 mt-1 text-center">Processing: 0%</p>
+                    </div>
+                </div>
+
+                <!-- Output Video -->
+                <div id="outputContainer" class="hidden bg-gray-800 rounded-lg shadow-sm p-4">
+                    <h3 class="text-sm font-medium text-gray-300 mb-2">Output Video</h3>
+                    <video id="outputVideo" controls class="w-full rounded-lg"></video>
+                </div>
+            </div>
+        </div>
+
+        <!-- Debug Console -->
+        <div id="debug" class="mt-4 bg-gray-800 text-green-400 rounded-lg p-4 font-mono text-xs h-32 overflow-y-auto"></div>
+
+        <!-- Extra Features Button -->
+        <div class="mt-4">
+            <a href="feature.html"><button id="extraFeaturesBtn" class="w-full py-2 bg-gray-700 text-white rounded-md hover:bg-gray-800">
+                Extra Features
+            </button></a>
+        </div>
+
+        <!-- Let's Visualize -->
+        <div class="mt-4">
+            <a href="visualize.html"><button id="visualizeBtn" class="w-full py-2 bg-gray-700 text-white rounded-md hover:bg-gray-800">
+                Let's Visualize
+            </button></a>
+        </div>
+        <!-- Face Detect Button -->
+        <div class="mt-4">
+            <a href="face_detect.html">
+                <button id="faceDetectBtn" class="w-full py-2 bg-gray-700 text-white rounded-md hover:bg-gray-800">
+                    Face Detection
+                </button>
+             </a>
+        </div>
+   
+    </div>
+
+    
+</body>
+</html>

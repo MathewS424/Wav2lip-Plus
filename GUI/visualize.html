@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualize Input & Output</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <script src="js/visualize.js" defer></script>
+</head>
+<body class="bg-gray-900 text-gray-100 flex flex-col items-center p-6">
+    <h1 class="text-2xl font-bold text-blue-400 mb-4">Visualization of Input & Output</h1>
+
+    <div class="grid grid-cols-2 gap-6 w-full max-w-5xl">
+        <!-- Input Video Section -->
+        <div class="bg-gray-800 p-4 rounded-lg shadow-lg w-full flex flex-col items-center">
+            <h2 class="text-lg font-semibold text-gray-300 mb-2">Input Video</h2>
+            <video id="inputVideo" class="w-48 h-28 rounded-lg" controls></video> <!-- Small size -->
+            <button id="compareInputBtn" class="mt-2 w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                Start Comparison
+            </button>
+        </div>
+
+        <!-- Output Video Section -->
+        <div class="bg-gray-800 p-4 rounded-lg shadow-lg w-full flex flex-col items-center">
+            <h2 class="text-lg font-semibold text-gray-300 mb-2">Output Video</h2>
+            <video id="outputVideo" class="w-48 h-28 rounded-lg" controls></video> <!-- Small size -->
+            <button id="compareOutputBtn" class="mt-2 w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                Start Comparison
+            </button>
+        </div>
+    </div>
+
+    <!-- Frame Comparison Section (More Space for Frames) -->
+    <div class="mt-6 w-full max-w-5xl grid grid-cols-2 gap-4 border-t border-gray-700 pt-6">
+        <div>
+            <h3 class="text-lg font-semibold text-gray-300 mb-2 text-center">Input Frames</h3>
+            <div id="inputFramesColumn" class="grid grid-cols-2 gap-2"></div> <!-- Large frame area -->
+        </div>
+        <div class="border-l border-gray-700 pl-4">
+            <h3 class="text-lg font-semibold text-gray-300 mb-2 text-center">Output Frames</h3>
+            <div id="outputFramesColumn" class="grid grid-cols-2 gap-2"></div> <!-- Large frame area -->
+        </div>
+    </div>
+    <footer class="fixed bottom-0 left-0 w-full bg-gray-900 py-4 flex justify-center">
+        <div class="inline-flex space-x-2">
+            <a href="dashboard.html"><button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l">
+                Prev
+            </button></a>
+            <a>
+                <button class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r">
+                    Next
+                </button>
+            </a>  
+        </div>
+    </footer>
+
+    
+</body>
+
+</html>

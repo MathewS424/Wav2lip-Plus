@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Detection & Lip Mapping</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <script src="js/face_detect.js" defer></script>
+</head>
+<body class="bg-gray-900 text-gray-100 flex flex-col items-center p-6 min-h-screen">
+    <h1 class="text-2xl font-bold text-blue-400 mb-4">Face Detection & Lip Mapping</h1>
+
+    <!-- Video Upload Section -->
+    <div class="bg-gray-800 p-4 rounded-lg shadow-lg w-full max-w-3xl flex flex-col items-center">
+        <h2 class="text-lg font-semibold text-gray-300 mb-2">Upload Video</h2>
+        <input type="file" id="videoFileInput" accept="video/*" class="mt-2">
+        <button id="processVideoBtn" 
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mt-2">
+            Process Video
+        </button>
+    </div>
+
+    <!-- Output Face Frames -->
+    <div class="mt-6 w-full max-w-5xl">
+        <h3 class="text-lg font-semibold text-gray-300 mb-2 text-center">Detected Face Frames</h3>
+        <div id="outputFramesColumn" class="grid grid-cols-4 gap-2 bg-gray-800 p-4 rounded-lg shadow-lg">
+            <!-- Detected faces will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <!-- Lip Mapping Video Output -->
+    <div class="mt-6 w-full max-w-3xl">
+        <h3 class="text-lg font-semibold text-gray-300 mb-2 text-center">Lip Mapping Video</h3>
+        <div id="videoContainer" class="relative">
+            <video id="lipVideo" class="w-full rounded-lg shadow-lg" controls>
+                <source type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+</body>
+</html>
