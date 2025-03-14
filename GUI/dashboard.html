@@ -92,10 +92,19 @@
                     </div>
                 </div>
 
-                <!-- Output Video -->
+                <!-- Wav2Lip Output Video -->
                 <div id="outputContainer" class="hidden bg-gray-800 rounded-lg shadow-sm p-4">
-                    <h3 class="text-sm font-medium text-gray-300 mb-2">Output Video</h3>
+                    <h3 class="text-sm font-medium text-gray-300 mb-2">Wav2Lip Output</h3>
                     <video id="outputVideo" controls class="w-full rounded-lg"></video>
+                    <button id="enhanceBtn" class="hidden mt-4 w-full py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">
+                        Enhance Output
+                    </button>
+                </div>
+
+                <!-- CodeFormer Output -->
+                <div id="enhancedContainer" class="hidden bg-gray-800 rounded-lg shadow-sm p-4">
+                    <h3 class="text-sm font-medium text-gray-300 mb-2">Enhanced Output (CodeFormer)</h3>
+                    <video id="enhancedVideo" controls class="w-full rounded-lg"></video>
                 </div>
             </div>
         </div>

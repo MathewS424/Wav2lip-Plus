@@ -51,7 +51,7 @@ document.getElementById('video').addEventListener('change', async function(e) {
         document.getElementById('videoInfo').textContent = 
             `${video.videoWidth}x${video.videoHeight} @ ${fps}fps, ${Math.round(video.duration)}s`;
         extractFrames(video);
-    };
+    }; 
 });
 
 document.getElementById('audio').addEventListener('change', function(e) {
@@ -124,7 +124,7 @@ async function testConnection() {
     }
 }
 
-// Form submission
+// Process video with Wav2Lip
 document.getElementById('submitBtn').onclick = async function() {
     const serverUrl = document.getElementById('serverUrl').value.trim();
     const videoFile = document.getElementById('video').files[0];
@@ -173,6 +173,7 @@ document.getElementById('submitBtn').onclick = async function() {
         const blob = await response.blob();
         document.getElementById('outputVideo').src = URL.createObjectURL(blob);
         outputContainer.style.display = 'block';
+        document.getElementById('enhanceBtn').classList.remove('hidden'); // Show the Enhance button
         updateStatus('Processing complete!', 'success');
 
     } catch (error) {
@@ -181,6 +182,38 @@ document.getElementById('submitBtn').onclick = async function() {
         submitBtn.disabled = false;
     }
 };
+
+// Enhance video with CodeFormer
+document.getElementById('enhanceBtn').onclick = async function () {
+    const serverUrl = document.getElementById('serverUrl').value.trim();
+
+    if (!serverUrl) {
+        updateStatus('Please enter the server URL', 'error');
+        return;
+    }
+
+    updateStatus('Enhancing video with CodeFormer...', 'processing');
+    this.disabled = true;
+
+    try {
+        const response = await makeRequest(`${serverUrl}/enhance`, {
+            method: 'POST',
+            mode: 'cors'
+        });
+
+        const blob = await response.blob();
+        document.getElementById('enhancedVideo').src = URL.createObjectURL(blob);
+        document.getElementById('enhancedContainer').classList.remove('hidden');
+        updateStatus('Enhancement complete!', 'success');
+
+    } catch (error) {
+        updateStatus(`Enhancement failed: ${error.message}`, 'error');
+    } finally {
+        this.disabled = false;
+    }
+};
+
+
 
 document.getElementById("visualizeBtn").addEventListener("click", function (event) {
     event.preventDefault(); // Prevent default action
@@ -192,6 +225,8 @@ document.getElementById("visualizeBtn").addEventListener("click", function (even
         alert("Please upload a video and process it before visualization!");
         return;
     }
+
+
 
     // Pass input & output video URLs via query parameters
     const visualizeURL = `visualize.html?input=${encodeURIComponent(inputVideo)}&output=${encodeURIComponent(outputVideo)}`;
@@ -206,6 +241,11 @@ document.getElementById("faceDetectBtn").addEventListener("click", function (eve
 
     if (!serverUrl) {
         alert("Please enter and save the Ngrok server URL before proceeding!");
+        return;
+    }
+
+    if (!document.getElementById("outputVideo").src) {  // Prevent empty page
+        alert("Please process a video first!");
         return;
     }
 
