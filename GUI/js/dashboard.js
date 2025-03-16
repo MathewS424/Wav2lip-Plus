@@ -250,8 +250,10 @@ document.getElementById("faceDetectBtn").addEventListener("click", function (eve
     }
 
     // Pass server URL via query parameters
-    const faceDetectURL = `face_detect.html?server=${encodeURIComponent(serverUrl)}`;
-    window.open(faceDetectURL, "_blank"); // Open in a new window
+    // const faceDetectURL = `face_detect.html?server=${encodeURIComponent(serverUrl)}`;
+    // window.open(faceDetectURL, "_blank"); // Open in a new window
+    // Navigate to face_detect.html in the same tab
+    window.location.href = `face_detect.html?server=${encodeURIComponent(serverUrl)}`;
 });
 
 
