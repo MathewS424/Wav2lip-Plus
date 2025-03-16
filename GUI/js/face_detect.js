@@ -11,27 +11,32 @@ async function processVideo() {
     const ngrokUrl = getNgrokUrl();
     if (!ngrokUrl) return;
 
-    const fileInput = document.getElementById("videoFileInput");
     const processButton = document.getElementById("processVideoBtn");
     const outputFramesColumn = document.getElementById("outputFramesColumn");
-
-    if (!fileInput.files.length) {
-        alert("Please upload a video file.");
-        return;
-    }
+    const videoContainer = document.getElementById("videoContainer");
 
     try {
-        console.log("🚀 Sending video file to backend...");
+        console.log("🚀 Sending process request to backend...");
         processButton.disabled = true;
         processButton.textContent = "Processing...";
-        outputFramesColumn.innerHTML = '<div class="text-center">Processing video...</div>';
-
-        const formData = new FormData();
-        formData.append("video", fileInput.files[0]);
+        
+        // Add satisfying loading animation
+        outputFramesColumn.innerHTML = `
+            <div class="flex justify-center items-center py-6">
+                <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
+            </div>
+            <div class="text-center text-gray-300">Processing your video, please wait...</div>
+        `;
+        
+        videoContainer.innerHTML = `
+            <div class="flex justify-center items-center py-6">
+                <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
+            </div>
+            <div class="text-center text-gray-300">Preparing video output...</div>
+        `;
 
         const response = await fetch(`${ngrokUrl}/process_video`, {
-            method: "POST",
-            body: formData
+            method: "POST"
         });
 
         if (!response.ok) {
@@ -72,39 +77,11 @@ async function displayImages(imageDataUrls) {
     try {
         outputFramesColumn.innerHTML = ''; // Clear loading message
         
-        // Create all image containers first
-        const containers = imageDataUrls.map((_, index) => {
-            const imgContainer = document.createElement("div");
-            imgContainer.classList.add("relative", "m-2");
-            
-            const loadingIndicator = document.createElement("div");
-            loadingIndicator.classList.add("absolute", "inset-0", "flex", "items-center", "justify-center", "bg-black", "bg-opacity-50", "rounded-lg");
-            loadingIndicator.innerHTML = '<div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>';
-            
-            imgContainer.appendChild(loadingIndicator);
-            outputFramesColumn.appendChild(imgContainer);
-            
-            return { container: imgContainer, loadingIndicator };
-        });
-
-        // Load images
         imageDataUrls.forEach((dataUrl, index) => {
             const img = new Image();
             img.classList.add("w-32", "h-32", "rounded-lg", "shadow-md", "object-cover");
-            
-            img.onload = () => {
-                console.log(`✅ Image ${index + 1} loaded successfully`);
-                containers[index].loadingIndicator.remove();
-                containers[index].container.appendChild(img);
-            };
-
-            img.onerror = () => {
-                console.error(`❌ Failed to load image ${index + 1}`);
-                containers[index].loadingIndicator.innerHTML = '<div class="text-red-500">Failed to load</div>';
-            };
-
-            // Set the data URL directly
             img.src = dataUrl;
+            outputFramesColumn.appendChild(img);
         });
 
     } catch (error) {
@@ -117,37 +94,29 @@ async function displayVideo(videoDataUrl) {
     const videoContainer = document.getElementById("videoContainer");
     
     try {
-        // Show loading indicator
-        videoContainer.innerHTML = `
-            <div class="video-loading text-center py-4">
-                <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-                <div class="mt-2">Loading video...</div>
-            </div>
-        `;
+        videoContainer.innerHTML = `<div class="flex justify-center items-center py-6">
+            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
+        </div>
+        <div class="text-center text-gray-300">Loading video...</div>`;
 
-        // Create video element
         const video = document.createElement('video');
         video.id = 'lipVideo';
         video.className = 'w-full rounded-lg shadow-md';
         video.controls = true;
-
+        video.src = videoDataUrl;
+        
         video.onloadeddata = () => {
             console.log("✅ Video loaded successfully");
             videoContainer.innerHTML = '';
             videoContainer.appendChild(video);
         };
 
-        video.onerror = (error) => {
-            console.error("❌ Error loading video:", error);
+        video.onerror = () => {
+            console.error("❌ Error loading video");
             videoContainer.innerHTML = '<div class="text-red-500">Failed to load video</div>';
         };
 
-        // Set the data URL directly
-        video.src = videoDataUrl;
-
-        // Start loading the video
         video.load();
-
     } catch (error) {
         console.error('Error displaying video:', error);
         videoContainer.innerHTML = `<div class="text-red-500">Error: ${error.message}</div>`;
