@@ -184,6 +184,7 @@ document.getElementById('submitBtn').onclick = async function() {
 };
 
 // Enhance video with CodeFormer
+// Enhance video with CodeFormer
 document.getElementById('enhanceBtn').onclick = async function () {
     const serverUrl = document.getElementById('serverUrl').value.trim();
 
@@ -196,10 +197,21 @@ document.getElementById('enhanceBtn').onclick = async function () {
     this.disabled = true;
 
     try {
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += 2;
+            if (progress <= 95) {
+                updateProgress(progress);
+            }
+        }, 3000);
+
         const response = await makeRequest(`${serverUrl}/enhance`, {
             method: 'POST',
             mode: 'cors'
         });
+
+        clearInterval(progressInterval);
+        updateProgress(100);
 
         const blob = await response.blob();
         document.getElementById('enhancedVideo').src = URL.createObjectURL(blob);
@@ -255,6 +267,8 @@ document.getElementById("faceDetectBtn").addEventListener("click", function (eve
     // Navigate to face_detect.html in the same tab
     window.location.href = `face_detect.html?server=${encodeURIComponent(serverUrl)}`;
 });
+
+
 
 
 
